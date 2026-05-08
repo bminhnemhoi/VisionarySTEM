@@ -36,9 +36,10 @@ COPY --chown=vs:vs pyproject.toml requirements.txt ./
 # Sample data — required by /api/v1/mock/analyze + library endpoints
 COPY --chown=vs:vs tests/sample_data/ ./tests/sample_data/
 
-# Pre-create runtime directories for outputs (TTS cache, uploads)
-RUN mkdir -p /app/output/tts_cache /app/output/gemini_tts_cache /app/output/uploads \
-    && chown -R vs:vs /app/output
+# Pre-create runtime dirs needed by config.py mkdir at import time.
+# IMPORTANT: chown -R vs:vs /app so non-root user can mkdir/write.
+RUN mkdir -p /app/uploads /app/output/tts_cache /app/output/gemini_tts_cache \
+    && chown -R vs:vs /app
 
 ENV PATH=/home/vs/.local/bin:$PATH \
     PYTHONUNBUFFERED=1 \
