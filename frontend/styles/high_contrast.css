@@ -1,0 +1,176 @@
+/* VisionarySTEM - High Contrast Accessibility Theme
+   Designed for low-vision and visually impaired users.
+   Min font size 18px, contrast ratio ≥ 7:1 (WCAG AAA). */
+
+/* Base */
+html, body, [data-testid="stAppViewContainer"] {
+  font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif !important;
+  font-size: 18px !important;
+  line-height: 1.6 !important;
+}
+
+/* High contrast: black bg, bright yellow accents */
+[data-testid="stAppViewContainer"] {
+  background-color: #0a0a0a !important;
+  color: #f5f5f5 !important;
+}
+
+[data-testid="stHeader"] {
+  background-color: #0a0a0a !important;
+}
+
+/* Sidebar */
+[data-testid="stSidebar"] {
+  background-color: #1a1a1a !important;
+  border-right: 3px solid #ffd600 !important;
+}
+[data-testid="stSidebar"] * {
+  color: #f5f5f5 !important;
+}
+
+/* Headings */
+h1, h2, h3 {
+  color: #ffd600 !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.02em;
+}
+h1 { font-size: 2.4em !important; }
+h2 { font-size: 1.8em !important; }
+h3 { font-size: 1.4em !important; }
+
+/* Buttons - large click target ≥ 44x44 px (WCAG AAA) */
+.stButton > button, button[kind="primary"] {
+  min-height: 50px !important;
+  min-width: 120px !important;
+  font-size: 1.1em !important;
+  font-weight: 600 !important;
+  background-color: #ffd600 !important;
+  color: #0a0a0a !important;
+  border: 3px solid #ffd600 !important;
+  border-radius: 8px !important;
+  padding: 10px 20px !important;
+  transition: all 0.15s ease;
+}
+.stButton > button:hover, button[kind="primary"]:hover {
+  background-color: #fff176 !important;
+  border-color: #fff176 !important;
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 3px rgba(255, 214, 0, 0.4);
+}
+.stButton > button:focus, button[kind="primary"]:focus {
+  outline: 4px solid #00e5ff !important;
+  outline-offset: 2px !important;
+}
+
+/* File uploader */
+[data-testid="stFileUploader"] section {
+  background-color: #1a1a1a !important;
+  border: 3px dashed #ffd600 !important;
+  border-radius: 8px !important;
+  padding: 20px !important;
+}
+
+/* Text inputs */
+.stTextInput input, .stTextArea textarea {
+  background-color: #1a1a1a !important;
+  color: #ffffff !important;
+  border: 2px solid #f5f5f5 !important;
+  border-radius: 6px !important;
+  font-size: 1em !important;
+  padding: 12px !important;
+}
+.stTextInput input:focus, .stTextArea textarea:focus {
+  border-color: #ffd600 !important;
+  outline: 3px solid rgba(255, 214, 0, 0.5) !important;
+}
+
+/* Audio player */
+audio {
+  width: 100% !important;
+  filter: invert(1);
+  border-radius: 8px;
+}
+
+/* Block cards */
+.block-card {
+  background-color: #1a1a1a;
+  border-left: 5px solid #ffd600;
+  padding: 16px 20px;
+  margin: 12px 0;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+.block-card:hover {
+  background-color: #262626;
+}
+.block-card.math { border-left-color: #f44336; }
+.block-card.chart { border-left-color: #4caf50; }
+.block-card.table { border-left-color: #ff9800; }
+.block-card.figure { border-left-color: #9c27b0; }
+
+.block-meta {
+  font-size: 0.85em;
+  color: #b0b0b0;
+}
+
+/* LaTeX block highlight */
+.stMarkdown .katex-display {
+  background-color: #1a1a1a;
+  border: 2px solid #ffd600;
+  padding: 16px;
+  border-radius: 6px;
+  font-size: 1.3em;
+}
+
+/* Progress bar — bright yellow */
+.stProgress > div > div > div {
+  background-color: #ffd600 !important;
+}
+
+/* Status badges */
+.status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.85em;
+  font-weight: 600;
+  margin-right: 6px;
+}
+.status-badge.text   { background: #4285f4; color: #fff; }
+.status-badge.math   { background: #db4437; color: #fff; }
+.status-badge.chart  { background: #0f9d58; color: #fff; }
+.status-badge.table  { background: #f4b400; color: #000; }
+.status-badge.figure { background: #ab47bc; color: #fff; }
+
+/* Skip link for screen readers */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: #ffd600;
+  color: #000;
+  padding: 8px 16px;
+  z-index: 100;
+  border-radius: 4px;
+}
+.skip-link:focus { top: 6px; }
+
+/* Keyboard hint footer */
+.kbd-hint {
+  background: #1a1a1a;
+  border: 1px solid #444;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 0.9em;
+  margin-top: 24px;
+}
+.kbd-hint kbd {
+  background: #333;
+  border: 1px solid #666;
+  border-radius: 3px;
+  padding: 2px 6px;
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-size: 0.9em;
+  color: #ffd600;
+  margin: 0 2px;
+}

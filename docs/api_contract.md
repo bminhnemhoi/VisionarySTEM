@@ -44,7 +44,7 @@ http://localhost:8000
     "filename": "newton_law_sample.pdf",
     "total_pages": 1,
     "processing_time_ms": 1000,
-    "model_used": "gemini-1.5-pro"
+    "model_used": "gemini-2.5-flash"
   },
   "content_blocks": [
     {

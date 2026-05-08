@@ -1,102 +1,150 @@
 {
   "document_metadata": {
-    "filename": "newton_law_sample.pdf",
-    "total_pages": 1,
-    "processing_time_ms": 1000,
-    "model_used": "gemini-1.5-pro (mock)"
+    "filename": "vat_ly_10_chuong_2_dinh_luat_newton.pdf",
+    "total_pages": 2,
+    "processing_time_ms": 1850,
+    "model_used": "gemini-2.5-flash (mock — sample chương 2 vật lý 10)"
   },
   "content_blocks": [
     {
       "id": "block_001",
       "type": "text",
-      "raw_content": "Định luật II Newton về chuyển động",
+      "raw_content": "Chương 2: Ba định luật Newton về chuyển động",
       "latex": null,
-      "spoken_text": "Định luật hai Niu-tơn về chuyển động.",
+      "spoken_text": "Chương hai. Ba định luật Niu-tơn về chuyển động. Đây là chương trình vật lý lớp mười, học kỳ một. Sau chương này bạn sẽ hiểu vì sao vật chuyển động, cách tính lực và gia tốc, và áp dụng vào các bài toán cơ bản.",
       "language": "vi",
-      "confidence": 0.97,
-      "coordinates": {
-        "page": 1,
-        "x": 10,
-        "y": 5,
-        "w": 80,
-        "h": 8,
-        "region": "top-center"
-      }
+      "confidence": 0.99,
+      "coordinates": { "page": 1, "x": 5, "y": 3, "w": 90, "h": 6, "region": "top-center" }
     },
     {
       "id": "block_002",
       "type": "text",
-      "raw_content": "Nội dung: Gia tốc của một vật tỉ lệ thuận với lực tác dụng lên nó và tỉ lệ nghịch với khối lượng của nó.",
+      "raw_content": "I. Định luật I Newton (Định luật quán tính): Một vật sẽ giữ nguyên trạng thái đứng yên hoặc chuyển động thẳng đều nếu không có lực nào tác dụng lên nó, hoặc các lực tác dụng triệt tiêu lẫn nhau.",
       "latex": null,
-      "spoken_text": "Nội dung: Gia tốc của một vật tỉ lệ thuận với lực tác dụng lên nó và tỉ lệ nghịch với khối lượng của nó.",
+      "spoken_text": "Định luật một Niu-tơn, còn gọi là định luật quán tính. Phát biểu: một vật sẽ giữ nguyên trạng thái đứng yên hoặc chuyển động thẳng đều, nếu không có lực nào tác dụng lên nó, hoặc các lực tác dụng triệt tiêu lẫn nhau. Hiểu đơn giản, nếu xe ô tô đang chạy mà tài xế tắt máy và không có ma sát, xe sẽ chạy mãi không dừng.",
       "language": "vi",
-      "confidence": 0.95,
-      "coordinates": {
-        "page": 1,
-        "x": 10,
-        "y": 15,
-        "w": 80,
-        "h": 10,
-        "region": "top-center"
-      }
+      "confidence": 0.97,
+      "coordinates": { "page": 1, "x": 5, "y": 12, "w": 90, "h": 12, "region": "top-center" }
     },
     {
       "id": "block_003",
       "type": "math",
-      "raw_content": "F = ma",
-      "latex": "F = ma",
-      "spoken_text": "Lực bằng khối lượng nhân gia tốc.",
+      "raw_content": "Sigma F = 0  =>  v = const",
+      "latex": "\\sum \\vec{F} = 0 \\Rightarrow \\vec{v} = \\text{const}",
+      "spoken_text": "Công thức định luật một: tổng vectơ các lực tác dụng bằng không, suy ra vận tốc là hằng số. Tức là vật không thay đổi vận tốc, có thể đứng yên hoặc chuyển động đều.",
       "language": "vi",
-      "confidence": 0.99,
-      "coordinates": {
-        "page": 1,
-        "x": 35,
-        "y": 30,
-        "w": 30,
-        "h": 8,
-        "region": "center"
-      }
+      "confidence": 0.98,
+      "coordinates": { "page": 1, "x": 30, "y": 26, "w": 40, "h": 6, "region": "center" }
     },
     {
       "id": "block_004",
-      "type": "math",
-      "raw_content": "a = F/m",
-      "latex": "a = \\frac{F}{m}",
-      "spoken_text": "Gia tốc bằng lực chia cho khối lượng.",
+      "type": "text",
+      "raw_content": "II. Định luật II Newton: Gia tốc của một vật cùng hướng với lực tác dụng, có độ lớn tỉ lệ thuận với độ lớn của lực và tỉ lệ nghịch với khối lượng của vật.",
+      "latex": null,
+      "spoken_text": "Định luật hai Niu-tơn. Phát biểu: gia tốc của một vật cùng hướng với lực tác dụng. Độ lớn của gia tốc tỉ lệ thuận với độ lớn của lực, và tỉ lệ nghịch với khối lượng của vật. Đây là định luật quan trọng nhất, dùng để tính lực hoặc gia tốc trong hầu hết bài tập.",
       "language": "vi",
-      "confidence": 0.98,
-      "coordinates": {
-        "page": 1,
-        "x": 35,
-        "y": 42,
-        "w": 30,
-        "h": 8,
-        "region": "center"
-      }
+      "confidence": 0.97,
+      "coordinates": { "page": 1, "x": 5, "y": 35, "w": 90, "h": 12, "region": "center-left" }
     },
     {
       "id": "block_005",
-      "type": "chart",
-      "raw_content": "[Biểu đồ đường thẳng: Trục X - Gia tốc (m/s²), Trục Y - Lực (N)]",
+      "type": "math",
+      "raw_content": "F = m * a  hay  a = F/m",
+      "latex": "\\vec{F} = m\\vec{a} \\quad \\Leftrightarrow \\quad \\vec{a} = \\frac{\\vec{F}}{m}",
+      "spoken_text": "Công thức định luật hai: lực bằng khối lượng nhân gia tốc. Hay tương đương: gia tốc bằng lực chia cho khối lượng. Đơn vị: lực đo bằng Niu-tơn ký hiệu N, khối lượng đo bằng ki-lô-gam ký hiệu kg, gia tốc đo bằng mét trên giây bình phương ký hiệu m trên s bình phương.",
+      "language": "vi",
+      "confidence": 0.99,
+      "coordinates": { "page": 1, "x": 25, "y": 49, "w": 50, "h": 8, "region": "center" }
+    },
+    {
+      "id": "block_006",
+      "type": "table",
+      "raw_content": "Bảng 2.1: Quan hệ F - a khi m = 2 kg | F (N): 2, 4, 6, 8, 10 | a (m/s²): 1, 2, 3, 4, 5",
       "latex": null,
-      "spoken_text": "Biểu đồ đường thẳng thể hiện mối quan hệ tỉ lệ thuận giữa lực và gia tốc. Trục hoành là gia tốc tính bằng mét trên giây bình phương, trục tung là lực tính bằng Niu-tơn. Đường thẳng đi qua gốc tọa độ cho thấy khi gia tốc tăng thì lực cũng tăng tương ứng.",
+      "spoken_text": "Bảng hai chấm một. Quan hệ giữa lực và gia tốc khi khối lượng bằng hai ki-lô-gam. Có năm cột giá trị. Cột một, lực hai Niu-tơn, gia tốc một mét trên giây bình phương. Cột hai, lực bốn Niu-tơn, gia tốc hai. Cột ba, lực sáu Niu-tơn, gia tốc ba. Cột bốn, lực tám Niu-tơn, gia tốc bốn. Cột năm, lực mười Niu-tơn, gia tốc năm. Bạn thấy quy luật: lực tăng gấp đôi thì gia tốc cũng tăng gấp đôi, đúng theo định luật hai.",
+      "language": "vi",
+      "confidence": 0.95,
+      "coordinates": { "page": 1, "x": 10, "y": 60, "w": 80, "h": 15, "region": "bottom-left" }
+    },
+    {
+      "id": "block_007",
+      "type": "chart",
+      "raw_content": "[Biểu đồ đường thẳng: trục hoành a (m/s²), trục tung F (N), với m = 2 kg]",
+      "latex": null,
+      "spoken_text": "Biểu đồ đường thẳng minh họa định luật hai. Trục hoành là gia tốc tính bằng mét trên giây bình phương, từ không đến năm. Trục tung là lực tính bằng Niu-tơn, từ không đến mười. Đường biểu diễn là đường thẳng đi qua gốc tọa độ, có hệ số góc bằng hai, tương ứng khối lượng hai ki-lô-gam. Khi gia tốc bằng không lực bằng không. Khi gia tốc bằng năm lực bằng mười Niu-tơn. Đường thẳng cho thấy lực tỉ lệ thuận với gia tốc.",
       "language": "vi",
       "confidence": 0.92,
-      "coordinates": {
-        "page": 1,
-        "x": 15,
-        "y": 55,
-        "w": 70,
-        "h": 35,
-        "region": "bottom-center"
-      }
+      "coordinates": { "page": 1, "x": 15, "y": 78, "w": 70, "h": 18, "region": "bottom-center" }
+    },
+    {
+      "id": "block_008",
+      "type": "text",
+      "raw_content": "III. Định luật III Newton (Định luật tác dụng - phản tác dụng): Khi vật A tác dụng lên vật B một lực, thì vật B cũng tác dụng lại vật A một lực có cùng độ lớn, cùng phương nhưng ngược chiều.",
+      "latex": null,
+      "spoken_text": "Định luật ba Niu-tơn, còn gọi là định luật tác dụng và phản tác dụng. Phát biểu: khi vật A tác dụng lên vật B một lực, thì vật B cũng tác dụng lại vật A một lực. Hai lực này có cùng độ lớn, cùng phương, nhưng ngược chiều nhau. Quan trọng: hai lực này tác dụng lên hai vật khác nhau, không phải cùng một vật, nên không triệt tiêu nhau.",
+      "language": "vi",
+      "confidence": 0.96,
+      "coordinates": { "page": 2, "x": 5, "y": 5, "w": 90, "h": 12, "region": "top-center" }
+    },
+    {
+      "id": "block_009",
+      "type": "math",
+      "raw_content": "F_AB = -F_BA",
+      "latex": "\\vec{F}_{AB} = -\\vec{F}_{BA}",
+      "spoken_text": "Công thức định luật ba: lực do A tác dụng lên B bằng âm lực do B tác dụng lên A. Dấu âm thể hiện hai lực ngược chiều, độ lớn bằng nhau.",
+      "language": "vi",
+      "confidence": 0.98,
+      "coordinates": { "page": 2, "x": 35, "y": 20, "w": 30, "h": 6, "region": "top-center" }
+    },
+    {
+      "id": "block_010",
+      "type": "text",
+      "raw_content": "Ví dụ thực tế: Khi bạn nhảy lên, bạn đẩy mặt đất xuống bằng chân, đồng thời mặt đất đẩy bạn lên. Tên lửa phụt khí xuống dưới, khí đẩy tên lửa lên trên. Cá đẩy nước về sau bằng đuôi, nước đẩy cá tiến về phía trước.",
+      "latex": null,
+      "spoken_text": "Ví dụ thực tế của định luật ba. Thứ nhất, khi bạn nhảy lên, bạn đẩy mặt đất xuống bằng chân, đồng thời mặt đất đẩy bạn lên trên — đó là lý do bạn bay lên được. Thứ hai, tên lửa phụt khí xuống dưới với lực rất lớn, khí đẩy tên lửa lên trên với lực bằng đúng như vậy — đây là nguyên lý đẩy của tên lửa. Thứ ba, cá bơi: đuôi cá đẩy nước về phía sau, nước phản lực đẩy cá tiến về phía trước.",
+      "language": "vi",
+      "confidence": 0.94,
+      "coordinates": { "page": 2, "x": 5, "y": 30, "w": 90, "h": 18, "region": "center-left" }
+    },
+    {
+      "id": "block_011",
+      "type": "figure",
+      "raw_content": "[Hình 2.3: Sơ đồ tên lửa với mũi tên lực — khí phụt xuống, tên lửa bay lên]",
+      "latex": null,
+      "spoken_text": "Hình hai chấm ba. Sơ đồ minh họa nguyên lý đẩy của tên lửa, áp dụng định luật ba Niu-tơn. Bên trái sơ đồ là tên lửa với mũi tên màu đỏ chỉ lên trên, ký hiệu lực đẩy lên thân tên lửa. Bên dưới đáy tên lửa là dòng khí phụt với mũi tên màu xanh chỉ xuống dưới, ký hiệu lực tên lửa tác dụng lên khí. Hai mũi tên có độ dài bằng nhau, thể hiện hai lực có độ lớn bằng nhau và ngược chiều.",
+      "language": "vi",
+      "confidence": 0.91,
+      "coordinates": { "page": 2, "x": 20, "y": 51, "w": 60, "h": 22, "region": "center" }
+    },
+    {
+      "id": "block_012",
+      "type": "text",
+      "raw_content": "Bài tập 1: Một ô tô khối lượng 1500 kg tăng tốc từ 0 đến 20 m/s trong 10 giây. Tính lực kéo của động cơ. (Bỏ qua ma sát.)",
+      "latex": null,
+      "spoken_text": "Bài tập một. Một ô tô khối lượng một nghìn năm trăm ki-lô-gam tăng tốc từ không đến hai mươi mét trên giây trong mười giây. Tính lực kéo của động cơ, bỏ qua ma sát. Hướng dẫn: tính gia tốc trước theo công thức gia tốc bằng vận tốc cuối trừ vận tốc đầu chia cho thời gian. Sau đó áp dụng định luật hai Niu-tơn để tính lực.",
+      "language": "vi",
+      "confidence": 0.93,
+      "coordinates": { "page": 2, "x": 5, "y": 76, "w": 90, "h": 9, "region": "bottom-left" }
+    },
+    {
+      "id": "block_013",
+      "type": "text",
+      "raw_content": "Bài tập 2: Một quả bóng khối lượng 0.5 kg đập vào tường với vận tốc 10 m/s và bật ngược lại với vận tốc 8 m/s sau 0.02 giây. Tính lực trung bình do tường tác dụng lên quả bóng và lực bóng tác dụng lên tường.",
+      "latex": null,
+      "spoken_text": "Bài tập hai. Một quả bóng khối lượng nửa ki-lô-gam đập vào tường với vận tốc mười mét trên giây, và bật ngược lại với vận tốc tám mét trên giây sau không phẩy không hai giây. Tính lực trung bình do tường tác dụng lên quả bóng. Sau đó tính lực do quả bóng tác dụng lên tường, áp dụng định luật ba. Hướng dẫn: thay đổi động lượng bằng lực nhân thời gian.",
+      "language": "vi",
+      "confidence": 0.92,
+      "coordinates": { "page": 2, "x": 5, "y": 87, "w": 90, "h": 10, "region": "bottom-left" }
     }
   ],
   "spatial_index": {
     "regions": {
-      "top-center": ["block_001", "block_002"],
-      "center": ["block_003", "block_004"],
-      "bottom-center": ["block_005"]
+      "top-center": ["block_001", "block_002", "block_008"],
+      "center": ["block_003", "block_005", "block_011"],
+      "center-left": ["block_004", "block_010"],
+      "top-center-page2": ["block_009"],
+      "bottom-left": ["block_006", "block_012", "block_013"],
+      "bottom-center": ["block_007"]
     }
   }
 }

@@ -1,83 +1,169 @@
 """
-VisionarySTEM - Benchmark Suite (Phase 3)
-===========================================
-Runs latency and accuracy (WER) tests against sample PDFs using Gemini Flash limit optimization.
+VisionarySTEM Benchmark Suite — Sprint 2/3 expanded.
+Runs latency + Hungarian-matched WER/CER on all sample PDFs.
+
+Usage:
+    python scripts/run_benchmark.py             # all samples
+    python scripts/run_benchmark.py --sample physics  # one sample
 """
 
-import os
+import argparse
 import json
+import sys
 import time
 from pathlib import Path
-from pprint import pprint
+
+sys.path.insert(0, ".")
 
 from src.core.document_processor import analyze_file
 from src.evaluation.wer_calculator import evaluate_document_accuracy
 
-def run_benchmarks():
-    print("=" * 60)
-    print("🚀 VisionarySTEM Evaluation Benchmark (Phase 3)")
-    print("=" * 60)
-    
-    # Locate test files
-    project_root = Path(__file__).parent.parent
-    sample_pdf = project_root / "tests" / "sample_data" / "sample_physics.pdf"
-    gt_json_path = project_root / "tests" / "sample_data" / "benchmarks" / "sample_physics_gt.json"
-    
-    if not sample_pdf.exists() or not gt_json_path.exists():
-        print(f"Error: Missing test files.")
-        print(f"PDF exists: {sample_pdf.exists()}")
-        print(f"GT exists: {gt_json_path.exists()}")
-        return
-        
-    with open(gt_json_path, 'r', encoding='utf-8') as f:
-        ground_truth = json.load(f)
-        
-    print(f"📄 Testing PDF: {sample_pdf.name}")
-    print(f"⏱️ Simulating request...")
-    
-    # 1. LATENCY BENCHMARK
-    start_time = time.time()
+ROOT = Path(__file__).parent.parent
+SAMPLES_DIR = ROOT / "tests" / "sample_data"
+GT_DIR = SAMPLES_DIR / "benchmarks"
+
+SAMPLES = {
+    "physics": ("sample_physics.pdf", "sample_physics_gt.json"),
+    "calculus": ("sample_calculus.pdf", "sample_calculus_gt.json"),
+    "linear_algebra": ("sample_linear_algebra.pdf", "sample_linear_algebra_gt.json"),
+    "chemistry": ("sample_chemistry.pdf", "sample_chemistry_gt.json"),
+    "statistics": ("sample_statistics.pdf", "sample_statistics_gt.json"),
+    "wave_physics": ("sample_wave_physics.pdf", "sample_wave_physics_gt.json"),
+}
+
+
+def benchmark_one(name: str, pdf_name: str, gt_name: str) -> dict:
+    pdf_path = SAMPLES_DIR / pdf_name
+    gt_path = GT_DIR / gt_name
+    if not pdf_path.exists() or not gt_path.exists():
+        return {"name": name, "error": "missing files"}
+
+    print(f"\n{'=' * 60}")
+    print(f"📄 Benchmark: {name} ({pdf_name})")
+    print(f"{'=' * 60}")
+
+    gt = json.loads(gt_path.read_text(encoding="utf-8"))
+
+    t0 = time.time()
     try:
-        analysis_result = analyze_file(str(sample_pdf))
+        result = analyze_file(str(pdf_path))
     except Exception as e:
         print(f"❌ Analysis failed: {e}")
-        return
-        
-    latency_ms = int((time.time() - start_time) * 1000)
-    
-    # 2. ACCURACY BENCHMARK (WER)
-    accuracy_results = evaluate_document_accuracy(
-        ground_truth_blocks=ground_truth,
-        ai_generated_blocks=analysis_result.content_blocks
+        return {"name": name, "error": str(e)}
+    latency_ms = int((time.time() - t0) * 1000)
+
+    accuracy = evaluate_document_accuracy(
+        ground_truth_blocks=gt,
+        ai_generated_blocks=result.content_blocks,
     )
-    
-    # Output to Console
-    print("\n📊 BENCHMARK RESULTS")
-    print("-" * 30)
-    print(f"Độ trễ xử lý (Latency): {latency_ms/1000:.2f} s")
-    print(f"Khối đã xử lý (Blocks): {len(analysis_result.content_blocks)} khối")
-    
-    overall = accuracy_results["overall"]
-    print("\n🎯 ĐỘ CHÍNH XÁC (ACCURACY)")
-    print(f"Lỗi văn bản tổng quát (Overall WER): {overall['wer']*100:.1f}%")
-    print(f"Lỗi ký tự tổng quát (Overall CER): {overall['cer']*100:.1f}%")
-    
-    print("\nChi tiết theo loại nội dung:")
-    for b_type, metrics in accuracy_results["by_type"].items():
-        if metrics["count"] > 0:
-            print(f" - {b_type.upper()}: WER = {metrics['wer']*100:.1f}%, CER = {metrics['cer']*100:.1f}% ({metrics['count']} blocks)")
-            
-    # Save Report
-    report_path = project_root / "benchmark_report.md"
-    with open(report_path, "w", encoding="utf-8") as rf:
-        rf.write(f"# VisionarySTEM Benchmark Report\n\n")
-        rf.write(f"- **PDF**: `{sample_pdf.name}`\n")
-        rf.write(f"- **Latency**: `{latency_ms/1000:.2f} s`\n")
-        rf.write(f"- **Overall WER**: `{overall['wer']*100:.1f}%`\n")
-        rf.write(f"- **Math WER**: `{accuracy_results['by_type'].get('math', {}).get('wer', 0.0)*100:.1f}%`\n")
-        rf.write(f"\n> *Test được tự động sinh bởi VisionarySTEM Evaluation Script (Phase 3)*\n")
-        
-    print(f"\n✅ Đã lưu báo cáo tại: {report_path.name}")
+
+    overall = accuracy["overall"]
+    print(f"⏱  Latency: {latency_ms / 1000:.2f}s")
+    print(f"📦 Blocks: {len(result.content_blocks)} (GT: {len(gt)})")
+    print(f"🎯 WER: {overall['wer'] * 100:.1f}%, CER: {overall['cer'] * 100:.1f}%")
+    print(f"   unmatched_gt={overall['unmatched_gt']}, extra_ai={overall['extra_ai']}")
+    for btype, m in accuracy["by_type"].items():
+        if m["count"]:
+            print(f"   - {btype}: WER={m['wer'] * 100:.1f}% CER={m['cer'] * 100:.1f}% n={m['count']}")
+
+    return {
+        "name": name,
+        "pdf": pdf_name,
+        "latency_ms": latency_ms,
+        "n_blocks_ai": len(result.content_blocks),
+        "n_blocks_gt": len(gt),
+        "overall_wer": overall["wer"],
+        "overall_cer": overall["cer"],
+        "unmatched_gt": overall["unmatched_gt"],
+        "extra_ai": overall["extra_ai"],
+        "by_type": accuracy["by_type"],
+    }
+
+
+def write_report(results: list[dict]) -> None:
+    report_path = ROOT / "benchmark_report.md"
+
+    valid = [r for r in results if "error" not in r]
+    if not valid:
+        report_path.write_text("# Benchmark Report\n\nAll samples failed.\n")
+        return
+
+    avg_latency = sum(r["latency_ms"] for r in valid) / len(valid)
+    avg_wer = sum(r["overall_wer"] for r in valid) / len(valid)
+    avg_cer = sum(r["overall_cer"] for r in valid) / len(valid)
+
+    # Math-only WER aggregated
+    math_wers = []
+    for r in valid:
+        if "math" in r["by_type"] and r["by_type"]["math"]["count"]:
+            math_wers.append(r["by_type"]["math"]["wer"])
+    math_wer_avg = sum(math_wers) / len(math_wers) if math_wers else 0.0
+
+    lines = [
+        "# VisionarySTEM Benchmark Report",
+        "",
+        f"_Auto-generated by `scripts/run_benchmark.py` — Sprint 3 expanded suite._",
+        "",
+        f"## Summary ({len(valid)}/{len(results)} samples passed)",
+        "",
+        f"- **Avg latency**: `{avg_latency / 1000:.2f}s`",
+        f"- **Avg WER (overall)**: `{avg_wer * 100:.1f}%`",
+        f"- **Avg CER (overall)**: `{avg_cer * 100:.1f}%`",
+        f"- **Avg WER (math only)**: `{math_wer_avg * 100:.1f}%`",
+        "",
+        "## Per-sample breakdown",
+        "",
+        "| Sample | Latency | Blocks (AI/GT) | WER | CER | Math WER | Unmatched GT | Extra AI |",
+        "|--------|---------|----------------|-----|-----|----------|--------------|----------|",
+    ]
+    for r in results:
+        if "error" in r:
+            lines.append(f"| {r['name']} | ❌ {r['error']} | — | — | — | — | — | — |")
+            continue
+        m_wer = r["by_type"].get("math", {}).get("wer", 0.0)
+        lines.append(
+            f"| {r['name']} | {r['latency_ms'] / 1000:.2f}s | "
+            f"{r['n_blocks_ai']}/{r['n_blocks_gt']} | "
+            f"{r['overall_wer'] * 100:.1f}% | {r['overall_cer'] * 100:.1f}% | "
+            f"{m_wer * 100:.1f}% | {r['unmatched_gt']} | {r['extra_ai']} |"
+        )
+
+    lines.extend([
+        "",
+        "## Methodology",
+        "",
+        "- Matching: **Hungarian assignment** (`scipy.optimize.linear_sum_assignment`) on CER cost matrix",
+        "- Preprocessing: lowercase, strip punctuation, collapse whitespace (Vietnamese-aware)",
+        "- Engine: Gemini 2.5 Flash via `google-genai`",
+        "- Async: `asyncio.gather` with `Semaphore(MAX_CONCURRENT_PAGES=4)`",
+        "",
+        "## Notes",
+        "",
+        "- `unmatched_gt` = GT blocks with no AI counterpart (under-extraction)",
+        "- `extra_ai` = AI blocks with no GT counterpart (over-extraction)",
+        "- Both counted but not bias matched WER",
+        "",
+    ])
+    report_path.write_text("\n".join(lines), encoding="utf-8")
+    print(f"\n✅ Report saved to: {report_path}")
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--sample", help="Run only one sample (e.g. physics)")
+    args = parser.parse_args()
+
+    if args.sample:
+        if args.sample not in SAMPLES:
+            print(f"Unknown sample. Available: {list(SAMPLES.keys())}")
+            return
+        pdf, gt = SAMPLES[args.sample]
+        results = [benchmark_one(args.sample, pdf, gt)]
+    else:
+        results = [benchmark_one(name, pdf, gt) for name, (pdf, gt) in SAMPLES.items()]
+
+    write_report(results)
+
 
 if __name__ == "__main__":
-    run_benchmarks()
+    main()

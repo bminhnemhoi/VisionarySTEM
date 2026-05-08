@@ -1,5 +1,7 @@
 # VisionarySTEM – Implementation Plan
 
+> **NOTE (2026-04-27)**: Tài liệu này là plan ban đầu. Model đã chốt thực tế là **`gemini-2.5-flash`** (xem `.env`, `src/config.py`, `PROJECT_STATE.md`). Mọi mention "Gemini 1.5 Pro" bên dưới được giữ nguyên cho mục đích lịch sử — code & runtime đang chạy 2.5 Flash.
+
 ## Mục tiêu dự án
 
 Xây dựng **VisionarySTEM** – một AI Agent đa phương thức (Multimodal) giúp sinh viên khiếm thị tiếp cận tài liệu STEM (PDF, hình ảnh). Hệ thống sử dụng **Gemini 1.5 Pro** để phân tích bố cục, biểu đồ, trích xuất LaTeX, và trả về JSON chuẩn cho Frontend (Người B).

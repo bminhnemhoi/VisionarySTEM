@@ -9,7 +9,7 @@ import time
 sys.path.insert(0, ".")
 
 print("=" * 60)
-print("[VisionarySTEM] Testing REAL Gemini 1.5 Pro Analysis")
+print("[VisionarySTEM] Testing REAL Gemini 2.5 Flash Analysis")
 print("=" * 60)
 
 # Test using the document processor directly (not via API)
@@ -17,7 +17,7 @@ from src.core.document_processor import analyze_file
 
 pdf_path = "tests/sample_data/sample_physics.pdf"
 print(f"\nFile: {pdf_path}")
-print("Sending to Gemini 1.5 Pro... (may take 5-15 seconds)")
+print("Sending to Gemini 2.5 Flash... (may take 5-15 seconds)")
 print()
 
 start = time.time()
@@ -54,7 +54,7 @@ try:
         print(f"  {region}: {', '.join(ids)}")
     
     print(f"\n{'=' * 60}")
-    print(f"[SUCCESS] Gemini 1.5 Pro is working! API key is valid.")
+    print(f"[SUCCESS] Gemini 2.5 Flash is working! API key is valid.")
     print(f"{'=' * 60}")
 
 except Exception as e:
@@ -64,7 +64,7 @@ except Exception as e:
     print()
     print("Common fixes:")
     print("  1. Check your API key in .env")
-    print("  2. Ensure you have Gemini 1.5 Pro access")
+    print("  2. Ensure you have Gemini 2.5 Flash access")
     print("  3. Check internet connection")
     import traceback
     traceback.print_exc()

@@ -1,0 +1,43 @@
+[project]
+name = "visionarystem"
+version = "2.1.0"
+description = "Multimodal AI Agent for Visually Impaired STEM Students"
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+asyncio_mode = "auto"
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::PendingDeprecationWarning",
+]
+addopts = "-v --tb=short"
+
+[tool.coverage.run]
+source = ["src"]
+omit = [
+    "*/__pycache__/*",
+    "*/tests/*",
+    "scripts/*",
+    "src/db/*",   # requires live Postgres — covered by integration tests in Sprint 5
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.:",
+    "raise NotImplementedError",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+exclude = ["research/tools/", ".venv", "venv"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = [
+    "E501",  # line too long — handled by formatter
+    "B008",  # FastAPI Depends() in defaults
+]

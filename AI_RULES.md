@@ -15,7 +15,7 @@ Mục tiêu của file này là lưu trữ "linh hồn" của dự án Visionary
   - Trải nghiệm người dùng (UX) thông qua Voice Query (Truy vấn giọng nói theo không gian).
 
 ## 2. CÔNG NGHỆ CHÍNH (TECH STACK)
-- **Mô hình AI Core**: Sử dụng **Gemini 2.5 Flash** (Native Multimodal) qua thư viện `google-genai`. **KHÔNG** dùng các API bên thứ 3 đắt đỏ như Mathpix hay Document AI.
+- **Mô hình AI Core**: Sử dụng **Gemini 2.5 Flash** (Native Multimodal) qua thư viện `google-genai`. Cho cuộc thi: **KHÔNG** dùng API trả phí khác. Cho thương mại hoá (Pro/Enterprise tier): có thể dùng Mathpix/PhoWhisper/Whisper khi cần (theo chính sách routing trong `src/core/router.py`).
 - **Backend (Person A)**: FastAPI (Python). Xử lý RAG, AI routing.
 - **Frontend (Person B)**: Streamlit (Python). Xử lý giao diện, hiển thị LaTeX, Voice Input/Output.
 - **Xử lý tài liệu**: PyMuPDF (`fitz`), kết hợp với Gemini để xử lý trực tiếp ảnh/PDF.

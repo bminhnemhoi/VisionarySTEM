@@ -9,14 +9,16 @@ Cho phép truy vấn giọng nói như "Góc trên bên phải có gì?"
 """
 
 import logging
+import os
 import uuid
+from pathlib import Path
 from typing import Optional
 from collections import defaultdict
 
 import chromadb
 from chromadb.config import Settings
 
-from src.config import GEMINI_API_KEY, GEMINI_MODEL
+from src.config import GEMINI_MODEL, OUTPUT_DIR
 from src.api.schemas import ContentBlock, Coordinates, SpatialQueryResponse
 
 logger = logging.getLogger(__name__)
@@ -103,13 +105,27 @@ class SpatialRAGEngine:
     và đối khớp vùng dựa trên từ khóa cho truy vấn không gian.
     """
 
-    def __init__(self):
-        """Initialize ChromaDB client (in-memory for competition speed)."""
-        self._client = chromadb.Client(Settings(
-            anonymized_telemetry=False,
-        ))
+    def __init__(self, persist_dir: Optional[str] = None):
+        """
+        Initialize ChromaDB client.
+
+        - persist_dir set or env CHROMA_PERSIST_DIR set → PersistentClient (survives restart)
+        - else → in-memory (for tests/single-tenant demo)
+        """
+        persist_dir = persist_dir or os.getenv("CHROMA_PERSIST_DIR")
+        if persist_dir:
+            Path(persist_dir).mkdir(parents=True, exist_ok=True)
+            self._client = chromadb.PersistentClient(
+                path=persist_dir,
+                settings=Settings(anonymized_telemetry=False),
+            )
+            logger.info(f"[SpatialRAG] Persistent ChromaDB at {persist_dir}")
+        else:
+            self._client = chromadb.Client(Settings(anonymized_telemetry=False))
+            logger.info("[SpatialRAG] In-memory ChromaDB (set CHROMA_PERSIST_DIR for persistence)")
         self._collections: dict[str, chromadb.Collection] = {}
-        logger.info("[SpatialRAG] Engine initialized (in-memory ChromaDB)")
+        # Cache block coordinates per doc for spatial relation filtering
+        self._doc_blocks: dict[str, list[ContentBlock]] = {}
 
     def index_document(
         self,
@@ -176,6 +192,7 @@ class SpatialRAGEngine:
         )
 
         self._collections[document_id] = collection
+        self._doc_blocks[document_id] = list(content_blocks)
         logger.info(
             f"[SpatialRAG] Indexed {len(ids)} blocks for document {document_id}"
         )
@@ -213,37 +230,40 @@ class SpatialRAGEngine:
         # --- Step 2: Detect target content types ---
         target_types = self._detect_types(query_lower)
 
-        # --- Step 3: Build ChromaDB filter ---
+        # --- Step 3: Detect spatial relations (anchor + relation) ---
+        # e.g. "dưới biểu đồ" → relation=below, anchor_type=chart
+        relation, anchor_type = self._detect_relation(query_lower, target_types)
+
+        # --- Step 4: Build ChromaDB filter ---
         where_filter = self._build_filter(target_regions, target_types)
 
-        # --- Step 4: Query ChromaDB ---
+        # --- Step 5: Query ChromaDB ---
         try:
             if where_filter:
-                results = collection.query(
-                    query_texts=[query_text],
-                    n_results=top_k,
-                    where=where_filter,
-                )
+                results = collection.query(query_texts=[query_text], n_results=top_k * 2, where=where_filter)
             else:
-                # Pure semantic search (no spatial/type filter)
-                results = collection.query(
-                    query_texts=[query_text],
-                    n_results=top_k,
-                )
+                results = collection.query(query_texts=[query_text], n_results=top_k * 2)
         except Exception as e:
             logger.error(f"[SpatialRAG] Query failed: {e}")
-            # Fallback to unfiltered query
-            results = collection.query(
-                query_texts=[query_text],
-                n_results=top_k,
-            )
+            results = collection.query(query_texts=[query_text], n_results=top_k * 2)
 
-        # --- Step 5: Convert results to ContentBlock list ---
         matched_blocks = self._results_to_blocks(results)
 
-        # --- Step 6: Generate spoken answer ---
+        # --- Step 6: Apply relation filter (above/below/left_of/right_of) ---
+        if relation:
+            matched_blocks = self._apply_relation_filter(
+                document_id=document_id,
+                candidates=matched_blocks,
+                relation=relation,
+                anchor_type=anchor_type,
+                anchor_regions=target_regions,
+            )
+
+        # Truncate to top_k after relation filtering
+        matched_blocks = matched_blocks[:top_k]
+
         spoken_answer = self._generate_spoken_answer(
-            query_text, matched_blocks, target_regions, target_types
+            query_text, matched_blocks, target_regions, target_types, relation
         )
 
         return SpatialQueryResponse(
@@ -275,6 +295,93 @@ class SpatialRAGEngine:
                     found.append(ctype)
                     break
         return found
+
+    def _detect_relation(
+        self,
+        query_lower: str,
+        target_types: list[str],
+    ) -> tuple[Optional[str], Optional[str]]:
+        """
+        Detect spatial relation + anchor type.
+        Returns (relation, anchor_type) where:
+          - relation ∈ {"above","below","left_of","right_of","next_to"} or None
+          - anchor_type ∈ {"text","math","chart","table","figure"} or None
+
+        Heuristic: if a relation keyword AND a type keyword both appear,
+        AND the relation immediately precedes the type in the query → that type is the anchor.
+        E.g. "phía dưới biểu đồ" → relation=below, anchor=chart.
+
+        If no anchor type but relation present → return (relation, None) and let caller use
+        target region as anchor instead.
+        """
+        for relation, kws in RELATION_KEYWORDS.items():
+            for kw in kws:
+                pos = query_lower.find(kw)
+                if pos < 0:
+                    continue
+                # Look for a type keyword AFTER the relation keyword (anchor follows relation in VN)
+                after = query_lower[pos + len(kw):]
+                for ctype, type_kws in TYPE_KEYWORDS.items():
+                    for tk in type_kws:
+                        if tk in after[:25]:  # anchor likely within next ~25 chars
+                            return relation, ctype
+                # No anchor type found, but relation exists
+                return relation, None
+        return None, None
+
+    def _apply_relation_filter(
+        self,
+        document_id: str,
+        candidates: list[ContentBlock],
+        relation: str,
+        anchor_type: Optional[str],
+        anchor_regions: list[str],
+    ) -> list[ContentBlock]:
+        """
+        Filter candidates by spatial relation to anchor block(s).
+        anchor = block(s) of anchor_type (if specified) or in anchor_regions.
+        relation determines geometric constraint (above/below/left_of/right_of).
+        """
+        all_blocks = self._doc_blocks.get(document_id, [])
+        if not all_blocks:
+            return candidates
+
+        # Find anchor blocks
+        anchors = []
+        if anchor_type:
+            anchors = [b for b in all_blocks if b.type == anchor_type]
+        if not anchors and anchor_regions:
+            anchors = [b for b in all_blocks if b.coordinates.region in anchor_regions]
+        if not anchors:
+            # No anchor → return candidates unchanged
+            return candidates
+
+        # Pick the largest/highest-confidence anchor as reference
+        anchor = max(anchors, key=lambda b: b.confidence * b.coordinates.w * b.coordinates.h)
+        ax, ay, aw, ah = anchor.coordinates.x, anchor.coordinates.y, anchor.coordinates.w, anchor.coordinates.h
+        a_cx, a_cy = ax + aw / 2, ay + ah / 2
+
+        def matches(block: ContentBlock) -> bool:
+            if block.id == anchor.id:
+                return False  # exclude anchor itself
+            bx, by, bw, bh = block.coordinates.x, block.coordinates.y, block.coordinates.w, block.coordinates.h
+            b_cx, b_cy = bx + bw / 2, by + bh / 2
+            if relation == "above":
+                return b_cy < ay  # block center is above anchor's top edge
+            if relation == "below":
+                return b_cy > ay + ah
+            if relation == "left_of":
+                return b_cx < ax
+            if relation == "right_of":
+                return b_cx > ax + aw
+            if relation == "next_to":
+                # within 20% horizontal distance and roughly same y
+                return abs(b_cy - a_cy) < 15 and abs(b_cx - a_cx) < 30
+            return True
+
+        filtered = [b for b in candidates if matches(b)]
+        # If filter removed everything, return original (graceful degradation)
+        return filtered or candidates
 
     def _build_filter(
         self,
@@ -339,6 +446,7 @@ class SpatialRAGEngine:
         blocks: list[ContentBlock],
         regions: list[str],
         types: list[str],
+        relation: Optional[str] = None,
     ) -> str:
         """Generate a natural Vietnamese spoken answer from matched blocks."""
         if not blocks:
@@ -350,7 +458,16 @@ class SpatialRAGEngine:
         # Build context-aware answer
         parts = []
 
-        if regions:
+        relation_vi = {
+            "above": "phía trên",
+            "below": "phía dưới",
+            "left_of": "bên trái",
+            "right_of": "bên phải",
+            "next_to": "bên cạnh",
+        }
+        if relation and relation in relation_vi:
+            parts.append(f"Ở {relation_vi[relation]}, tôi tìm thấy {len(blocks)} nội dung.")
+        elif regions:
             region_vi = {
                 "top-left": "góc trên bên trái",
                 "top-center": "phía trên",

@@ -1,0 +1,22 @@
+[
+  {
+    "id": "gt_001",
+    "type": "text",
+    "spoken_text": "Cho hàm số f của x bằng x bình phương cộng 2 x, liên tục trên đoạn không tới ba."
+  },
+  {
+    "id": "gt_002",
+    "type": "text",
+    "spoken_text": "Tích phân xác định từ 0 đến 3 của f của x được tính bởi công thức Newton-Leibniz."
+  },
+  {
+    "id": "gt_003",
+    "type": "math",
+    "spoken_text": "Tích phân từ 0 đến 3 của x bình phương cộng 2 x dx bằng x mũ 3 chia 3 cộng x bình phương đánh giá tại 3 trừ 0 bằng 18."
+  },
+  {
+    "id": "gt_004",
+    "type": "math",
+    "spoken_text": "F của b trừ F của a bằng F của 3 trừ F của 0."
+  }
+]

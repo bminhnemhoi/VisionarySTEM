@@ -1,0 +1,22 @@
+[
+  {
+    "id": "gt_001",
+    "type": "text",
+    "spoken_text": "Phương trình sóng một chiều mô tả dao động truyền đi trong môi trường đàn hồi."
+  },
+  {
+    "id": "gt_002",
+    "type": "text",
+    "spoken_text": "Bước sóng lambda liên quan với tần số f và vận tốc v bởi v bằng lambda nhân f."
+  },
+  {
+    "id": "gt_003",
+    "type": "math",
+    "spoken_text": "y của x t bằng A nhân sin của k x trừ omega t cộng phi."
+  },
+  {
+    "id": "gt_004",
+    "type": "math",
+    "spoken_text": "Vận tốc bằng lambda nhân f bằng omega chia k."
+  }
+]

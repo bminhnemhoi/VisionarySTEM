@@ -1,0 +1,22 @@
+[
+  {
+    "id": "gt_001",
+    "type": "text",
+    "spoken_text": "Phản ứng cháy hoàn toàn của metan trong oxy tạo thành C O 2 và nước."
+  },
+  {
+    "id": "gt_002",
+    "type": "text",
+    "spoken_text": "Đây là phản ứng tỏa nhiệt với delta H bằng âm 890 kilô jun trên mol."
+  },
+  {
+    "id": "gt_003",
+    "type": "math",
+    "spoken_text": "C H 4 cộng 2 O 2 tạo thành C O 2 cộng 2 H 2 O."
+  },
+  {
+    "id": "gt_004",
+    "type": "math",
+    "spoken_text": "Delta H bằng âm 890 kilô jun trên mol."
+  }
+]

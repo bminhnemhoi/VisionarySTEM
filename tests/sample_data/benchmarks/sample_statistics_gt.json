@@ -1,0 +1,22 @@
+[
+  {
+    "id": "gt_001",
+    "type": "text",
+    "spoken_text": "Phân phối chuẩn với trung bình muy và độ lệch chuẩn sigma."
+  },
+  {
+    "id": "gt_002",
+    "type": "text",
+    "spoken_text": "Hàm mật độ xác suất được cho bởi:"
+  },
+  {
+    "id": "gt_003",
+    "type": "math",
+    "spoken_text": "f của x bằng 1 chia sigma nhân căn 2 pi nhân e mũ trừ x trừ muy bình phương chia 2 sigma bình phương."
+  },
+  {
+    "id": "gt_004",
+    "type": "chart",
+    "spoken_text": "Biểu đồ đường cong phân phối chuẩn với trục hoành là giá trị và trục tung là mật độ xác suất."
+  }
+]

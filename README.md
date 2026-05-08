@@ -10,10 +10,10 @@
 ## 🌟 Overview / Tổng quan
 
 **English:**
-VisionarySTEM is an AI-powered assistant that helps visually impaired students access STEM documents (PDFs, images). Using **Gemini 1.5 Pro's native multimodal capabilities**, it extracts text, mathematical formulas, charts, and spatial layout information from documents and converts them into natural Vietnamese speech.
+VisionarySTEM is an AI-powered assistant that helps visually impaired students access STEM documents (PDFs, images). Using **Gemini 2.5 Flash's native multimodal capabilities**, it extracts text, mathematical formulas, charts, and spatial layout information from documents and converts them into natural Vietnamese speech.
 
 **Tiếng Việt:**
-VisionarySTEM là trợ lý AI giúp sinh viên khiếm thị tiếp cận tài liệu STEM (PDF, ảnh). Sử dụng **khả năng đa phương thức gốc của Gemini 1.5 Pro**, hệ thống trích xuất văn bản, công thức toán, biểu đồ và thông tin bố cục không gian từ tài liệu, chuyển đổi thành giọng đọc tiếng Việt tự nhiên.
+VisionarySTEM là trợ lý AI giúp sinh viên khiếm thị tiếp cận tài liệu STEM (PDF, ảnh). Sử dụng **khả năng đa phương thức gốc của Gemini 2.5 Flash**, hệ thống trích xuất văn bản, công thức toán, biểu đồ và thông tin bố cục không gian từ tài liệu, chuyển đổi thành giọng đọc tiếng Việt tự nhiên.
 
 ---
 
@@ -41,7 +41,7 @@ PDF/Image → Gemini 1.5 Pro → Structured JSON → TTS (Vietnamese)
 ```
 
 **Tech Stack:**
-- **AI Model:** Gemini 1.5 Pro (Native Multimodal)
+- **AI Model:** Gemini 2.5 Flash (Native Multimodal)
 - **Backend:** FastAPI (Python)
 - **Frontend:** Streamlit (Person B)
 - **TTS:** Edge TTS (Vietnamese)

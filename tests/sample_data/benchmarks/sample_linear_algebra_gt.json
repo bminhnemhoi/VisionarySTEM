@@ -1,0 +1,27 @@
+[
+  {
+    "id": "gt_001",
+    "type": "text",
+    "spoken_text": "Cho hai ma trận A và B. Tích A B là ma trận C với."
+  },
+  {
+    "id": "gt_002",
+    "type": "math",
+    "spoken_text": "C i j bằng tổng theo k của A i k nhân B k j."
+  },
+  {
+    "id": "gt_003",
+    "type": "math",
+    "spoken_text": "Ma trận A bằng ma trận hàng một là một và hai, hàng hai là ba và bốn."
+  },
+  {
+    "id": "gt_004",
+    "type": "math",
+    "spoken_text": "Ma trận B bằng ma trận hàng một là năm và sáu, hàng hai là bảy và tám."
+  },
+  {
+    "id": "gt_005",
+    "type": "math",
+    "spoken_text": "Tích A B bằng ma trận hàng một là 19 và 22, hàng hai là 43 và 50."
+  }
+]

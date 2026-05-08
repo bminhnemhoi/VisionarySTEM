@@ -41,17 +41,46 @@ else:
 # Required Settings / Cai dat bat buoc
 # ============================================
 GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
-if not GEMINI_API_KEY:
-    print("[ERROR] GEMINI_API_KEY is not set in .env file!")
-    print("   Vui long dat GEMINI_API_KEY trong file .env")
-    sys.exit(1)
+
+
+class MissingApiKeyError(RuntimeError):
+    """Raised when GEMINI_API_KEY is missing — caller can handle (e.g. unit tests)."""
+
+
+def require_api_key() -> str:
+    """Return GEMINI_API_KEY or raise. Call this from runtime code, not at import."""
+    if not GEMINI_API_KEY:
+        raise MissingApiKeyError(
+            "GEMINI_API_KEY is not set. Copy .env.example to .env and fill in your key. "
+            "Vui long copy .env.example thanh .env va dien GEMINI_API_KEY."
+        )
+    return GEMINI_API_KEY
+
 
 # ============================================
 # Model & Processing Settings
 # ============================================
-GEMINI_MODEL: str = os.getenv("GEMINI_MODEL", "gemini-1.5-pro")
+GEMINI_MODEL: str = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 MAX_FILE_SIZE_MB: int = int(os.getenv("MAX_FILE_SIZE_MB", "20"))
 MAX_FILE_SIZE_BYTES: int = MAX_FILE_SIZE_MB * 1024 * 1024
+
+# ============================================
+# CORS / Tenant
+# ============================================
+ALLOWED_ORIGINS: list[str] = [
+    o.strip() for o in os.getenv("ALLOWED_ORIGINS", "http://localhost:8501,http://localhost:3000").split(",") if o.strip()
+]
+TENANT_MODE: str = os.getenv("TENANT_MODE", "single")  # "single" | "multi"
+
+# JWT for multi-tenant auth
+JWT_SECRET: str = os.getenv("JWT_SECRET", "dev-secret-change-in-production")
+JWT_ALGORITHM: str = os.getenv("JWT_ALGORITHM", "HS256")
+JWT_EXPIRES_MINUTES: int = int(os.getenv("JWT_EXPIRES_MINUTES", "60"))
+
+# Database (Sprint 4: optional in single mode)
+DATABASE_URL: str = os.getenv("DATABASE_URL", "")  # postgresql+asyncpg://... | empty=disabled
+REDIS_URL: str = os.getenv("REDIS_URL", "")
+CHROMA_PERSIST_DIR: str = os.getenv("CHROMA_PERSIST_DIR", "")
 
 # ============================================
 # TTS Settings
@@ -114,7 +143,7 @@ QUY TẮC BẮT BUỘC:
 # ============================================
 def print_config_summary():
     """Print current configuration (masking API key) / In cau hinh hien tai (an API key)"""
-    masked_key = GEMINI_API_KEY[:8] + "..." + GEMINI_API_KEY[-4:] if len(GEMINI_API_KEY) > 12 else "***"
+    masked_key = GEMINI_API_KEY[:8] + "..." + GEMINI_API_KEY[-4:] if len(GEMINI_API_KEY) > 12 else "(missing)"
     print("=" * 50)
     print("[VisionarySTEM Configuration]")
     print("=" * 50)
@@ -122,6 +151,8 @@ def print_config_summary():
     print(f"  API Key:       {masked_key}")
     print(f"  TTS Voice:     {TTS_VOICE}")
     print(f"  Max File Size: {MAX_FILE_SIZE_MB} MB")
+    print(f"  Tenant Mode:   {TENANT_MODE}")
+    print(f"  CORS Origins:  {ALLOWED_ORIGINS}")
     print(f"  Upload Dir:    {UPLOAD_DIR}")
     print(f"  Output Dir:    {OUTPUT_DIR}")
     print("=" * 50)

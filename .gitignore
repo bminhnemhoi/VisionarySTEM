@@ -41,3 +41,28 @@ htmlcov/
 
 # Models (marker-pdf downloads)
 models/
+
+# Research artifacts (papers PDF, cloned repos, datasets)
+research/papers/*.pdf
+research/papers/*.zip
+research/tools/*/
+!research/tools/.gitkeep
+!research/tools/CLONE_LIST.md
+!research/tools/WHY_USEFUL.md
+research/benchmarks/*/
+!research/benchmarks/.gitkeep
+!research/benchmarks/INDEX.md
+
+# Frontend Next.js
+frontend-next/node_modules/
+frontend-next/.next/
+frontend-next/out/
+frontend-next/.env*.local
+frontend-next/next-env.d.ts
+frontend-next/.turbo/
+
+# Claude Code session state (not for repo)
+.claude/
+
+# Deploy temp / scratch
+.hf-space/

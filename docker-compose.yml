@@ -1,0 +1,81 @@
+version: "3.9"
+
+# VisionarySTEM development stack — Postgres + Redis + MinIO + ChromaDB persistent
+# Usage: docker compose up -d
+# Then set DATABASE_URL=postgresql+asyncpg://vs:vs@localhost:5432/visionarystem
+#       REDIS_URL=redis://localhost:6379
+#       CHROMA_PERSIST_DIR=/data/chroma
+#       TENANT_MODE=multi  (only when ready)
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: vs-postgres
+    environment:
+      POSTGRES_USER: vs
+      POSTGRES_PASSWORD: vs
+      POSTGRES_DB: visionarystem
+    ports:
+      - "5432:5432"
+    volumes:
+      - vs-pg-data:/var/lib/postgresql/data
+      - ./scripts/db_init.sql:/docker-entrypoint-initdb.d/01_init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vs -d visionarystem"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: vs-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - vs-redis-data:/data
+    command: ["redis-server", "--appendonly", "yes"]
+
+  minio:
+    image: minio/minio:latest
+    container_name: vs-minio
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin123
+    ports:
+      - "9000:9000"   # S3 API
+      - "9001:9001"   # Console
+    volumes:
+      - vs-minio-data:/data
+    command: ["server", "/data", "--console-address", ":9001"]
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # Optional: backend + frontend for full-stack dev
+  # Uncomment to run via compose (otherwise use uvicorn/streamlit locally)
+  #
+  # backend:
+  #   build: .
+  #   ports: ["8000:8000"]
+  #   env_file: .env
+  #   depends_on: [postgres, redis, minio]
+  #   volumes:
+  #     - ./src:/app/src:ro
+  #     - vs-chroma-data:/data/chroma
+  #
+  # frontend:
+  #   image: python:3.12-slim
+  #   working_dir: /app
+  #   command: bash -c "pip install -r frontend/requirements.txt && streamlit run frontend/app.py --server.port 8501 --server.address 0.0.0.0"
+  #   volumes: [".:/app:ro"]
+  #   ports: ["8501:8501"]
+  #   environment: [VS_API_BASE=http://backend:8000/api/v1]
+  #   depends_on: [backend]
+
+volumes:
+  vs-pg-data:
+  vs-redis-data:
+  vs-minio-data:
+  vs-chroma-data:

@@ -73,8 +73,8 @@
    Bộ xử lý tài liệu trích xuất trang (PyMuPDF)
         │
         ▼
-4. Gemini 1.5 Pro analyzes multimodally:
-   Gemini 1.5 Pro phân tích đa phương thức:
+4. Gemini 2.5 Flash analyzes multimodally:
+   Gemini 2.5 Flash phân tích đa phương thức:
    - Text extraction / Trích xuất văn bản
    - Math → LaTeX / Toán → LaTeX
    - Chart description / Mô tả biểu đồ

@@ -32,6 +32,9 @@ class ContentBlock(BaseModel):
     """
     A single content block extracted from the document.
     Một khối nội dung đơn lẻ được trích xuất từ tài liệu.
+
+    Sprint 4: extended fields for accessibility export (EPUB3, MathML, Braille)
+    and reading-order semantics. All extension fields are Optional for backward compat.
     """
     id: str = Field(description="Unique block ID (e.g., block_001) / Mã khối duy nhất")
     type: Literal["text", "math", "chart", "table", "figure"] = Field(
@@ -51,6 +54,52 @@ class ContentBlock(BaseModel):
         description="AI confidence score (0.0-1.0) / Điểm tin cậy của AI"
     )
     coordinates: Coordinates = Field(description="Spatial position on page / Vị trí không gian trên trang")
+
+    # ============ Sprint 4 Accessibility Extensions ============
+    reading_order: Optional[int] = Field(
+        default=None,
+        description="Linear reading order (1-indexed) — critical for screen readers when y/x ordering fails (multi-column, footnotes). / Thứ tự đọc tuyến tính.",
+    )
+    importance: Optional[Literal["primary", "secondary", "decorative"]] = Field(
+        default=None,
+        description="Content importance — lets users skip decorative elements. / Mức quan trọng.",
+    )
+    alt_text_long: Optional[str] = Field(
+        default=None,
+        description="Long descriptive alt text for figures/charts (WCAG longdesc equivalent). / Mô tả dài cho hình/biểu đồ.",
+    )
+    mathml: Optional[str] = Field(
+        default=None,
+        description="MathML representation (alternative to LaTeX for screen readers + Braille). / MathML thay thế.",
+    )
+    parent_id: Optional[str] = Field(
+        default=None,
+        description="Parent block ID (for table cells, footnote refs, sub-figures). / Block cha.",
+    )
+    aria_role: Optional[str] = Field(
+        default=None,
+        description="ARIA role hint (math, figure, table, region, ...). / Gợi ý ARIA role.",
+    )
+
+    # ============ Sprint 8.2 Critique loop ============
+    critique_score: Optional[float] = Field(
+        default=None, ge=0.0, le=1.0,
+        description="Critique agent score (0-1). Lower = more concerns. / Điểm critique từ agent thứ 2.",
+    )
+    needs_review: Optional[bool] = Field(
+        default=None,
+        description="Flag set when critique_score < threshold. / Cần xem lại do nghi vấn.",
+    )
+    critique_issues: Optional[list[str]] = Field(
+        default=None,
+        description="List of issues flagged by critique agent. / Danh sách vấn đề được cảnh báo.",
+    )
+
+    # ============ Sprint 8.3 Sonification ============
+    sonification_data: Optional[dict] = Field(
+        default=None,
+        description="Extracted chart data points for sonification: {x_label, y_label, points: [[x,y]]}.",
+    )
 
 
 class SpatialIndex(BaseModel):
@@ -122,3 +171,53 @@ class ErrorResponse(BaseModel):
     """Error response / Phản hồi lỗi"""
     error: str
     detail: Optional[str] = None
+
+
+# ============================================================
+# Sprint 8.1 — Tutor chat
+# ============================================================
+
+class ChatMessage(BaseModel):
+    """One message in a tutor conversation."""
+    role: Literal["system", "user", "assistant"]
+    content: str
+    timestamp: Optional[str] = None
+    cited_blocks: Optional[list[str]] = Field(
+        default=None,
+        description="Block IDs referenced by this message (assistant only).",
+    )
+
+
+class ChatRequest(BaseModel):
+    """User message to tutor."""
+    document_id: str = Field(description="Previously analyzed document ID")
+    session_id: str = Field(description="Conversation session ID (uuid)")
+    message: str = Field(min_length=1, description="User question in Vietnamese")
+    voice_mode: bool = Field(default=False, description="If true, optimize reply for TTS (shorter sentences)")
+
+
+class ChatResponse(BaseModel):
+    """Tutor reply with follow-up suggestions."""
+    reply_text: str
+    suggested_followups: list[str] = Field(
+        default_factory=list,
+        description="2-3 suggested next questions in Vietnamese.",
+    )
+    cited_blocks: list[str] = Field(
+        default_factory=list,
+        description="Block IDs the reply references.",
+    )
+    session_id: str
+
+
+# ============================================================
+# Sprint 8.4 — Camera snapshot
+# ============================================================
+
+class CameraSnapshotResponse(BaseModel):
+    """Quick analysis of a camera frame (board/slide)."""
+    spoken_text: str = Field(description="Vietnamese description of the frame, ≤3 sentences.")
+    raw_content: str = Field(description="Raw extracted text/formulas")
+    confidence: float = Field(ge=0.0, le=1.0)
+    has_math: bool = False
+    has_chart: bool = False

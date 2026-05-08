@@ -1,0 +1,25 @@
+# Bỏ binary nặng
+*.pdf
+*.zip
+*.tar.gz
+*.bin
+*.pt
+*.safetensors
+*.ckpt
+
+# Bỏ folder code clone
+tools/*/
+!tools/WHY_USEFUL.md
+!tools/.gitkeep
+
+# Bỏ datasets
+benchmarks/*/
+!benchmarks/INDEX.md
+!benchmarks/.gitkeep
+
+# Notebooks output
+*.ipynb_checkpoints/
+
+# Giữ markdown notes
+!*.md
+!*.notes.md
